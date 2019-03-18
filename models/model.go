@@ -17,6 +17,7 @@ type Customer struct {
 	Like        bool      `json:"like"`
 	UTS         time.Time `json:"uts"`
 	IP          string    `json:"IP"`
+	Location    string    `json:"location"`
 	Reviews     []Review  `json:"reviews"`
 	Ratings     []Rating  `json:"ratings"`
 }
@@ -99,7 +100,7 @@ func AddRating(email string, comment string, by string) bool {
 }
 
 //SaveReview Function to save the details in SimDB
-func SaveReview(name string, email string, path string, coverletter string, webaddress string, like bool, IP string) bool {
+func SaveReview(name string, email string, path string, coverletter string, webaddress string, like bool, IP string, location string) bool {
 
 	driver, err := db.New("data")
 	if err != nil {
@@ -114,6 +115,7 @@ func SaveReview(name string, email string, path string, coverletter string, weba
 		Like:        like,
 		IP:          IP,
 		UTS:         time.Now(),
+		Location:    location,
 	}
 	err = driver.Insert(customer)
 	if err != nil {

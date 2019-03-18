@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"log"
 	"mime"
-	"net"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -24,7 +23,6 @@ func GetProfileById(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	Vars := mux.Vars(r)
 	email := Vars["email"]
-	log.Println("email is :", email)
 	result := model.GetProfileById(email)
 	jData, _ := json.Marshal(result)
 	w.Header().Set("Content-Type", "application/json")
@@ -87,7 +85,7 @@ func GetAllProfiles(w http.ResponseWriter, r *http.Request) {
 }
 func SubmitReview(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
-	ip, _, _ := net.SplitHostPort(r.RemoteAddr)
+
 	r.ParseMultipartForm(32 << 20) // Parses the request body
 	file, _, err := r.FormFile("file")
 
@@ -112,13 +110,14 @@ func SubmitReview(w http.ResponseWriter, r *http.Request) {
 	boolean := r.Form.Get("boolean")
 
 	name := r.Form.Get("name")
+	ip := r.Form.Get("ip")
+	location := r.Form.Get("location")
 	webAddresss := r.Form.Get("webAddress")
 
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	log.Println(coverletter + email + name + webAddresss)
 	var like bool
 	if boolean == "true" {
 		like = true
@@ -130,7 +129,7 @@ func SubmitReview(w http.ResponseWriter, r *http.Request) {
 	jData, err := json.Marshal(Data)
 	if err != nil {
 	}
-	model.SaveReview(name, email, newPath, coverletter, webAddresss, like, ip)
+	model.SaveReview(name, email, newPath, coverletter, webAddresss, like, ip, location)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jData)
 }
